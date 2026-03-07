@@ -1,7 +1,6 @@
-from rest_framework.views import APIView
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
 
 from .models import Sale, Expense
 from .serializers import (
@@ -13,11 +12,16 @@ from .serializers import (
 from .services import create_sale
 
 
-class CreateSaleView(APIView):
+class SaleViewSet(viewsets.ModelViewSet):
+
+    queryset = Sale.objects.prefetch_related("items").all().order_by("-created_at")
+
+    serializer_class = SaleSerializer
 
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+
+    def create(self, request):
 
         serializer = SaleCreateSerializer(data=request.data)
 
@@ -43,37 +47,10 @@ class CreateSaleView(APIView):
             )
 
 
-class SaleListView(APIView):
+class ExpenseViewSet(viewsets.ModelViewSet):
+
+    queryset = Expense.objects.all().order_by("-created_at")
+
+    serializer_class = ExpenseSerializer
 
     permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-
-        sales = Sale.objects.all().order_by("-created_at")
-
-        serializer = SaleSerializer(sales, many=True)
-
-        return Response(serializer.data)
-
-
-class ExpenseListCreateView(APIView):
-
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-
-        expenses = Expense.objects.all().order_by("-created_at")
-
-        serializer = ExpenseSerializer(expenses, many=True)
-
-        return Response(serializer.data)
-
-    def post(self, request):
-
-        serializer = ExpenseSerializer(data=request.data)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)

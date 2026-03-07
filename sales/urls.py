@@ -1,17 +1,12 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from .views import (
-    CreateSaleView,
-    SaleListView,
-    ExpenseListCreateView
-)
+from .views import SaleViewSet, ExpenseViewSet
 
-urlpatterns = [
 
-    path("create/", CreateSaleView.as_view()),
+router = DefaultRouter()
 
-    path("", SaleListView.as_view()),
+router.register("sales", SaleViewSet, basename="sales")
 
-    path("expenses/", ExpenseListCreateView.as_view()),
+router.register("expenses", ExpenseViewSet, basename="expenses")
 
-]
+urlpatterns = router.urls
