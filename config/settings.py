@@ -63,7 +63,13 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+from datetime import timedelta
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=2),  # Example: 30 minutes for access tokens
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Example: 7 days for refresh tokens
+    # You can add other Simple JWT settings here if needed
+}
 AUTH_USER_MODEL = 'users.User'
 ROOT_URLCONF = 'config.urls'
 

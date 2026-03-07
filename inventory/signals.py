@@ -9,4 +9,4 @@ from .models import Inventory
 def create_inventory(sender, instance, created, **kwargs):
 
     if created:
-        Inventory.objects.create(product=instance)
+        Inventory.objects.get_or_create(product=instance)
