@@ -28,8 +28,8 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["category"]
-    search_fields = ["name", "description"]
-    ordering_fields = ["name", "price"]
+    search_fields = ["name"]
+    ordering_fields = ["name"]
 
     def get_queryset(self):
 

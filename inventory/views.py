@@ -10,6 +10,10 @@ from .services import InventoryService
 from .permissions import IsAdminOnly
 from django.db import models
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+
+
 
 class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
 
@@ -18,6 +22,20 @@ class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = InventorySerializer
 
     permission_classes = [IsAuthenticated]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter
+    ]
+
+    search_fields = [
+        "product__name"
+    ]
+
+    ordering_fields = [
+        "quantity"
+    ]
 
 
     @action(detail=True, methods=["post"], permission_classes=[IsAdminOnly])

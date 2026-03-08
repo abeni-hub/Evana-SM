@@ -21,6 +21,22 @@ class SaleViewSet(viewsets.ModelViewSet):
     serializer_class = SaleSerializer
 
     permission_classes = [IsAuthenticated]
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter
+    ]
+
+    filterset_fields = [
+        "cashier",
+        "created_at"
+    ]
+
+    ordering_fields = [
+        "created_at",
+        "total_amount",
+        "total_profit"
+    ]
 
 
     def create(self, request):
@@ -56,3 +72,12 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseSerializer
 
     permission_classes = [IsAuthenticated]
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter
+    ]
+
+    search_fields = ["title"]
+
+    ordering_fields = ["amount", "created_at"]
