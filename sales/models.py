@@ -13,6 +13,12 @@ class Sale(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["cashier"]),
+        ]
+
     def __str__(self):
         return f"Sale #{self.id}"
 

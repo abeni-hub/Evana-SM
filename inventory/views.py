@@ -8,11 +8,11 @@ from .models import Inventory, InventoryHistory
 from .serializers import InventorySerializer, InventoryHistorySerializer
 from .services import InventoryService
 from .permissions import IsAdminOnly
+
 from django.db import models
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-
 
 
 class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -37,7 +37,6 @@ class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
         "quantity"
     ]
 
-
     @action(detail=True, methods=["post"], permission_classes=[IsAdminOnly])
     def add_stock(self, request, pk=None):
 
@@ -55,7 +54,6 @@ class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
         return Response({"message": "Stock added successfully"})
-
 
     @action(detail=True, methods=["post"], permission_classes=[IsAdminOnly])
     def remove_stock(self, request, pk=None):
@@ -75,7 +73,6 @@ class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response({"message": "Stock removed successfully"})
 
-
     @action(detail=False, methods=["get"])
     def low_stock(self, request):
 
@@ -90,10 +87,12 @@ class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class InventoryHistoryViewSet(viewsets.ReadOnlyModelViewSet):
 
-    queryset = InventoryHistory.objects.select_related(
-        "product",
-        "user"
-    ).all()
+    queryset = (
+        InventoryHistory.objects
+        .select_related("product", "user")
+        .all()
+        .order_by("-created_at")
+    )
 
     serializer_class = InventoryHistorySerializer
 
