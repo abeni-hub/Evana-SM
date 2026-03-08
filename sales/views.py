@@ -8,6 +8,7 @@ from .serializers import (
     SaleCreateSerializer,
     ExpenseSerializer
 )
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
@@ -16,11 +17,18 @@ from .services import create_sale
 
 class SaleViewSet(viewsets.ModelViewSet):
 
-    queryset = Sale.objects.prefetch_related("items").all().order_by("-created_at")
+    queryset = (
+        Sale.objects
+        .select_related("cashier")
+        .prefetch_related("items")
+        .all()
+        .order_by("-created_at")
+    )
 
     serializer_class = SaleSerializer
 
     permission_classes = [IsAuthenticated]
+
     filter_backends = [
         DjangoFilterBackend,
         SearchFilter,
@@ -37,7 +45,6 @@ class SaleViewSet(viewsets.ModelViewSet):
         "total_amount",
         "total_profit"
     ]
-
 
     def create(self, request):
 
@@ -72,12 +79,18 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseSerializer
 
     permission_classes = [IsAuthenticated]
+
     filter_backends = [
         DjangoFilterBackend,
         SearchFilter,
         OrderingFilter
     ]
 
-    search_fields = ["title"]
+    search_fields = [
+        "title"
+    ]
 
-    ordering_fields = ["amount", "created_at"]
+    ordering_fields = [
+        "amount",
+        "created_at"
+    ]
