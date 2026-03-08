@@ -6,6 +6,9 @@ from .serializers import ProductSerializer, CategorySerializer
 from users.permissions import IsAdminUserRole
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.db.models import Q
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -30,6 +33,24 @@ class ProductViewSet(viewsets.ModelViewSet):
     filterset_fields = ["category"]
     search_fields = ["name"]
     ordering_fields = ["name"]
+    # POS FAST SEARCH
+    @action(detail=False, methods=["get"], url_path="search")
+
+    def search_products(self, request):
+
+        query = request.query_params.get("q", "").strip()
+
+        # minimum 3 letters
+        if len(query) < 3:
+            return Response([])
+
+        products = Product.objects.filter(
+            Q(name__icontains=query)
+        ).select_related("category")[:10]
+
+        serializer = ProductSerializer(products, many=True)
+
+        return Response(serializer.data)
 
     def get_queryset(self):
 
