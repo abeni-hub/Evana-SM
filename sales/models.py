@@ -3,6 +3,8 @@ from users.models import User
 from products.models import Product
 
 
+
+# Sales Models
 class Sale(models.Model):
 
     cashier = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
